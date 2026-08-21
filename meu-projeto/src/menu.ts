@@ -1,7 +1,10 @@
-import promptSync from "prompt-sync";
 import { Biblioteca } from "./Biblioteca.ts";
 
-const prompt = promptSync();
+
+const prompt = window.prompt;
+function perguntar(mensagem: string): string {
+    return window.prompt(mensagem) ?? "";
+}
 
 function localizar (codigo: string, livros: Biblioteca[]): number {
 let posicao: number = -1;
@@ -36,7 +39,7 @@ do {
     console.log("5 - Alterar título");
     console.log("6 - Sair");
 
-    opcao = Number(prompt("Digite a opção: ")!);
+    opcao = Number(window.prompt("Digite a opção: ")!);
 
     switch (opcao) {
 
