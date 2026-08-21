@@ -1,34 +1,32 @@
 import { Biblioteca } from "./Biblioteca.ts";
 
-
 const prompt = window.prompt;
-function perguntar(mensagem: string): string {
-    return window.prompt(mensagem) ?? "";
-}
 
-function localizar (codigo: string, livros: Biblioteca[]): number {
-let posicao: number = -1;
-let i: number = 0;
-let encontrou: boolean = false;
- while (i < livros.length && !encontrou) {
-    if (livros[i].getCodigo() === codigo) {
-        posicao = i;
-        encontrou = true;
+
+function localizar(codigo: string, livros: Biblioteca[]): number {
+    let posicao: number = -1;
+    let i: number = 0;
+    let encontrou: boolean = false;
+    
+    while (i < livros.length && !encontrou) {
+        if (livros[i].getCodigo() === codigo) {
+            posicao = i;
+            encontrou = true;
+        }
+        i++;
     }
-    i++;
- }
- return posicao;
+    return posicao;
 }
-let livros: Biblioteca[] = new Array<Biblioteca>();
 
+let livros: Biblioteca[] = new Array<Biblioteca>();
 let opcao: number;
 let resposta: boolean;
 let tamanho: number;
 let codigo: string;
 let quantidade: number;
 let titulo: string;
-let i: number;// for
-let encontrou: boolean; // controle
+let i: number;
+let posicao: number;
 
 do {
     console.log("\n===== MENU =====");
@@ -39,23 +37,30 @@ do {
     console.log("5 - Alterar título");
     console.log("6 - Sair");
 
-    opcao = Number(window.prompt("Digite a opção: ")!);
+    opcao = Number(prompt("Digite a opção: ")!);
 
     switch (opcao) {
 
         case 1:
-            codigo = prompt("Código: ")!;
-            titulo = prompt("Título: ")!;
-            quantidade = Number(prompt("Quantidade: ")!);
-
-            const livro = new Biblioteca(codigo, titulo, quantidade);
-            tamanho = livros.push(livro);
-
-            console.log("Livro cadastrado!");
+            codigo = prompt("Digite o código do livro para adicionar exemplares: ")!;
+            posicao = localizar(codigo, livros);
+            if (posicao == -1) {
+                titulo = prompt("Digite o título do livro: ")!;
+                do {
+                    quantidade = parseInt(prompt("Digite a quantidade de exemplares: ")!);
+                } while (quantidade < 0);
+                let livro = new Biblioteca(codigo, titulo, quantidade);
+                 tamanho = livros.push(livro);
+                console.log("Livro cadastrado com sucesso!");   
+                        
+            } else {   console.log("Codigo não encontrado.");
+            }
             break;
 
-        case 2: //Listar livros
-            if (livros.length == 0) {
+           
+
+        case 2: // Listar livros
+            if (livros.length === 0) {
                 console.log("Nenhum livro cadastrado.");
             } else {
                 console.log("\nLista de Livros");
@@ -65,68 +70,68 @@ do {
             }
             break;
 
-        case 3: //Adicionar exemplares
-          let codigoAdicionar = prompt("Digite o código do livro para adicionar exemplares: ")!;
-          encontrou = false;
-          for (i = 0; i < livros.length; i++) {
-              if (livros[i].getCodigo() === codigoAdicionar) {
-                    let qtdAdicionar = Number(prompt("Digite a qutd de exemplar para Adicionar"));
-                    resposta = livros[i].adicionarExemplares(qtdAdicionar); 
-                    if (resposta) {
-                        console.log("Exemplares ad com sucesso!");
-                    }else{
-                        console.log("Quantidade inválida.");
-                    }
-                    encontrou = true;
-                    break;
-              }
-              if (encontrou == false) { // (!encontrou) {
-                console.log("Livro não encontrado.");
-              }
-          }
-        case 4: //Emprestar livro
-          let codEmprestar = prompt("Digite o código do livro para emprestar: ")!;
-          encontrou = false;
-          for (i = 0; i < livros.length; i++) {
-            if (livros[i].getCodigo() === codEmprestar ) {
-                let qtdEmprestar = Number(prompt("Digite a qutd de exemplar para emprestar"));  
-                 resposta = livros[i].emprestar(qtdEmprestar); 
-                 if (resposta) { // diferente de vazio então livro emprestado com sucesso
-                    console.log("Livro emprestado com sucesso!");
-                 }else{
-                    console.log("Quantidade inválida ou insuficiente.");
-                 }
-                 encontrou = true;
-                 break;
+        case 3: // Adicionar exemplares
+            codigo = prompt("Digite o código do livro para adicionar exemplares: ")!;
+            posicao = localizar(codigo, livros);
+            if (posicao == -1) {
+                console.log("Codigo não encontrado.");
+            } else {
+                do {
+                    quantidade = parseInt(prompt("Digite a quantidade de exemplares para adicionar: ")!);
+               } while (quantidade < 0);
+              resposta = livros[posicao].adicionarExemplares(quantidade);
+            if (resposta == true) {
+             console.log("Exemplares adicionados com sucesso!");
+            } else {
+            console.log("Quantidade inválida.");
             }
-            if (encontrou == false) { // (!encontrou) {
+         }
+    break;  
+
+        case 4: // Emprestar livro
+            codigo = prompt("Digite o código do livro para emprestar: ")!;
+            posicao = localizar(codigo, livros);
+            if (posicao == -1) {
+                console.log("Codigo não encontrado.");
+            } else {
+                do {
+                    quantidade = parseInt(prompt("Digite a quantidade de exemplares para emprestar: ")!);
+               } while (quantidade < 0);
+              resposta = livros[posicao].emprestar(quantidade);
+            if (resposta == true) {
+             console.log("Exemplares emprestados com sucesso!");
+            } else {
+            console.log("Quantidade inválida.");
+            }
+         }
+    break;  
+
+        case 5: // Alterar título
+            codigo = prompt("Digite o código do livro para alterar o título: ")!;
+            posicao = localizar(codigo, livros);
+            if (posicao == -1) {
                 console.log("Livro não encontrado.");
-              }
-          }
-        case 5: //Alterar título
-        let codAlterar = prompt("Digite o código do livro para alterar o título: ")!;
-        encontrou = false;
-        for (i = 0; i < livros.length; i++) {
-            if (livros[i].getCodigo() === codAlterar ) {
+            } else {
                 let novoTitulo = prompt("Digite o novo título: ")!;
-                livros[i].setTitulo(novoTitulo);// setando um novo título para o livro
+                livros[posicao].setTitulo(novoTitulo);
                 console.log("Título alterado com sucesso!");
-                encontrou = true;
-                break;
             }
-            
-        }
-        if (encontrou == false) { // (!encontrou) {
-            console.log("Livro não encontrado.");
-        }
-
-        case 6://Sair
-            console.log("Saindo do programa...");
             break;
 
-            default:
-            console.log("Opção inválida. Tente novamente.");
+        case 6: // excluir livro
+            codigo = prompt("Digite o código do livro para excluir: ")!;
+            posicao = localizar(codigo, livros);
+            if (posicao == -1) {
+                console.log("Livro não encontrado.");
+            } else {
+                livros.splice(posicao, 1); // Remove o livro do array
+                console.log("Livro excluído com sucesso!");
+            }
             break;
+    
+       default:
+         console.log("Opção inválida. Tente novamente.");
+          break;
     }
 
-} while (opcao != 6);
+} while (opcao !== 6);
