@@ -118,20 +118,24 @@ do {
             }
             break;
 
-        case 6: // excluir livro
+    case 6: // Excluir livro
             codigo = prompt("Digite o código do livro para excluir: ")!;
             posicao = localizar(codigo, livros);
             if (posicao == -1) {
                 console.log("Livro não encontrado.");
             } else {
-                livros.splice(posicao, 1); // Remove o livro do array
+                livros.splice(posicao, 1);
                 console.log("Livro excluído com sucesso!");
             }
             break;
+
+        case 7: // Sair
+            console.log("Saindo do sistema...");
+            break;
     
-       default:
-         console.log("Opção inválida. Tente novamente.");
-          break;
+        default:
+            console.log("Opção inválida. Tente novamente.");
+            break;
     }
 
-} while (opcao !== 6);
+} while (opcao !== 7);
